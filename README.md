@@ -1,8 +1,14 @@
-# Oracle SQL Python client
+# Apollo SQL
 
-![banner](https://lh3.googleusercontent.com/R5A-hTC8mY-n7b_UEdcGOm-I64UGinPW003bwMG0H74vUmF-GXYNk8EWus0s3oCZfEtZwl6c1Ac_FQGzBS60=w1920-h842-rw)
+![banner](https://drive.google.com/uc?export=view&id=1DyQ7Sox8FsRVNaRPd1JLqGB8u8WPR805)
 
 ## Requirements
 
 - [Python 3](https://www.python.org/downloads/)
 - [cx-Oracle](https://pypi.org/project/cx-Oracle/)
+
+## Usage
+
+```bash
+python main.py
+```
