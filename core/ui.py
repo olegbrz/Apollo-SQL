@@ -1,6 +1,6 @@
 import core.config
 
-banner = r'''
+banner = r'''==============================================================
         ___                ____         _____ ____    __ 
        /   |  ____  ____  / / /___     / ___// __ \  / / 
       / /| | / __ \/ __ \/ / / __ \    \__ \/ / / / / /  
@@ -10,8 +10,7 @@ banner = r'''
      - A lightweight Oracle SQL database Python client -
 
      (c) Lucía Arrabalí, Oleg Brezitskyy, Ainoa Fernández
-                Sergio Martín, Viktor Yosava
-'''
+                Sergio Martín, Viktor Yosava'''
 
 def menu(conn=''):
     menu = f'''
