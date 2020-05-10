@@ -21,53 +21,56 @@ def connect_to_server():
 
 
 if __name__ == "__main__":
+    settings = core.config.get_config()
     connected_to = ''
+
     core.ui.print_banner()
     while True:
-        # Refresh settings
-        settings = core.config.get_config()
-        try:
-            switch = core.ui.print_menu(connected_to)
+        try: switch = core.ui.print_menu(connected_to)
+        except:
+            print('\n (!) Please, check your selection.\n')
+            continue
 
-            # Connect/disconnect option
-            if switch == 1:
-                if not connected_to:
-                    try:
-                        conn = connect_to_server()
-                        host = settings['connection']['host']
-                        port = settings['connection']['port']
-                        user = settings['connection']['user']
-                        connected_to = f'\n [i] Connected to {host}:{port} as {user}'
-                    except:
-                        print('\n [!] An error has ocurred, please check connection settings.')
-                else:
-                    try:
-                        conn.close()
-                        connected_to = ''
-                        print('\n Disconnected successfully.')
-                    except:
-                        pass
+        # [1] Connect/disconnect option
+        if switch == 1:
+            if not connected_to:
+                try:
+                    print('\n [*] Connecting...')
+                    cursor = connect_to_server()
+                    host = settings['connection']['host']
+                    port = settings['connection']['port']
+                    user = settings['connection']['user']
+                    connected_to = f'\n [i] Connected to {host}:{port} as {user}'
+                except:
+                    print('\n [!] An error has ocurred, please check connection settings.')
+            else:
+                try:
+                    cursor.close()
+                    connected_to = ''
+                    print('\n [i] Disconnected successfully.')
+                except:
+                    pass
             
-            # TODO: Query data function
-            elif switch == 2: pass
-            # TODO: Alter data function
-            elif switch == 3: pass
+        # TODO: Query data function
+        elif switch == 2: pass
+        # TODO: Alter data function
+        elif switch == 3: pass
 
-            # Settings option
-            elif switch == 4:
-                option = 1
-                while option != 0:
-                    option = core.ui.print_settings()
+        # [4] Settings option
+        elif switch == 4:
+            option = 1
+            while option != 0:
+                option = core.ui.print_settings()
+                if option != 0:
                     core.config.modify_config(option)
+                    # Refresh settings
+                    settings = core.config.get_config()
 
-            # Exit execution
-            elif switch == 0:
-                try: conn.close()
-                except: pass
-                print('\n Good bye!')
+        # [0] Exit execution
+        elif switch == 0:
+            try: cursor.close()
+            except:
+                print('\n Good bye!\n')
                 break
 
-            else:
-                print('\nPlease type a valid number.\n'), input()
-        except:
-            print('\nPlease, check your selection.\n')
+        else: print('\n (!) Please type a valid number.')
