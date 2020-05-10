@@ -2,7 +2,6 @@ from configparser import ConfigParser
 from getpass import getpass
 from os.path import exists
 
-# Configuration file
 def init_config():
     config = ConfigParser()
     config.add_section('connection')
@@ -11,8 +10,6 @@ def init_config():
         config['connection'][field] = ''
     with open('config.ini', 'w+') as configfile:
         config.write(configfile)
-
-    
 
 def get_config():
     config = ConfigParser()
@@ -34,7 +31,7 @@ def modify_config(index):
     if values[index] == 'password':
         value = getpass('\nInput new password > ')
     else:
-        value = input(f'\nInput new value for {values[index]} > ')
+        value = input(f'\nInput new {values[index]} > ')
     set_config('connection', values[index], value)
 
 if not exists('config.ini'):

@@ -2,7 +2,6 @@ import core.ui
 import core.config
 import cx_Oracle
 
-
 def connect_to_server():
     connection_settings = core.config.get_config()['connection']
 
@@ -19,7 +18,6 @@ def connect_to_server():
     print('\n [i] Connected successfully.\n')
     return conn.cursor()
 
-
 if __name__ == "__main__":
     settings = core.config.get_config()
     connected_to = ''
@@ -28,7 +26,7 @@ if __name__ == "__main__":
     while True:
         try: switch = core.ui.print_menu(connected_to)
         except:
-            print('\n (!) Please, check your selection.\n')
+            print('\n (!) Please, check your selection.')
             continue
 
         # [1] Connect/disconnect option
@@ -42,18 +40,17 @@ if __name__ == "__main__":
                     user = settings['connection']['user']
                     connected_to = f'\n [i] Connected to {host}:{port} as {user}'
                 except:
-                    print('\n [!] An error has ocurred, please check connection settings.')
+                    print('\n [!] Connection failed, please check settings.')
             else:
                 try:
                     cursor.close()
                     connected_to = ''
                     print('\n [i] Disconnected successfully.')
-                except:
-                    pass
+                except: pass
             
-        # TODO: Query data function
+        # TODO: [2] Query data function
         elif switch == 2: pass
-        # TODO: Alter data function
+        # TODO: [3] Alter data function
         elif switch == 3: pass
 
         # [4] Settings option
@@ -69,8 +66,8 @@ if __name__ == "__main__":
         # [0] Exit execution
         elif switch == 0:
             try: cursor.close()
-            except:
-                print('\n Good bye!\n')
-                break
+            except: pass
+            print('\n Good bye!\n')
+            break
 
-        else: print('\n (!) Please type a valid number.')
+        else: print(f'\n (!) Error, option {switch} doesn\'t exist.')
