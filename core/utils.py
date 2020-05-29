@@ -1,4 +1,5 @@
 from datetime import datetime
+from extra.tabulate.tabulate import tabulate
 
 # Get all user tables in a list
 def get_tables(CURSOR):
@@ -22,14 +23,21 @@ def get_column_names(CURSOR, tablename):
     r = get_columns_attr(CURSOR, tablename)
     return [i[0] for i in r]
 
-# Get 
-def get_all_items(CURSOR, tablename):
-    query = f'SELECT * FROM {tablename}'
+# Prints query result with tabulate
+def show_query(CURSOR, query):
     r = CURSOR.execute(query)
-    return r
+    data = list(r)
+    headers = [i[0] for i in r.description]
+    print(tabulate(data, headers=headers))
+    return data
+
+# show_query() variant to query whole table
+def show_table(CURSOR, tablename):
+    query = f'SELECT * FROM {tablename}'
+    show_query(CURSOR, query)
 
 # Insert function with CLI prompt included
-def insert(CURSOR, tablename):
+def insert(CURSOR):
     
     def is_date(string):
         isdate = True
@@ -44,12 +52,22 @@ def insert(CURSOR, tablename):
         except: number = False
         return number
     
-    columns_attr = get_columns_attr(CURSOR,tablename)
+    tables = get_tables(CURSOR)
+    
+    for k, v in zip(range(1, len(tables)+1), tables):
+        print(f'\t[{k}]\t{v}')
+
+    try: selected = int(input('> ')) - 1
+    except: pass
+    
+    print(f'\nINSERTING INTO: {tables[selected]}')
+    
+    columns_attr = get_columns_attr(CURSOR, tables[selected])
     
     columns = []
     values = []
     
-    print('Insert data per each column (* columns are required, ENTER if null):')
+    print('\nInsert data per each column (* columns are required, ENTER if null):')
     
     for column in columns_attr:
         completed = False
@@ -107,7 +125,7 @@ def insert(CURSOR, tablename):
     columns = ", ".join(columns)
     
     # Prepare insert statement with customized data
-    insert_statement = f'''INSERT INTO {tablename} ({columns}) VALUES ({values})'''
+    insert_statement = f'''INSERT INTO {tables[selected]} ({columns}) VALUES ({values})'''
     
     print(insert_statement)
     # Execute insert to database
