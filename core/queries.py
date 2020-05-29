@@ -1,4 +1,4 @@
-queries = [
+predesigned_queries = [
     # 1
     '''SELECT empleado.nombre, familiar.nombre, relacion, empleado.departamento_nom_dep
     FROM familiar, empleado, departamento 
