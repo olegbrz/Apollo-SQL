@@ -34,22 +34,22 @@ def insert(CURSOR, tablename):
     def is_date(string):
         isdate = True
         day, month, year = string.split('/')
-        try: datetime(year=year, month=month, day=day)
+        try: datetime(year=int(year), month=int(month), day=int(day))
         except: isdate = False
         return isdate
-
-    def is_number(string):
-        isnumber = True
-        try: float(string)
-        except: isnumber = False
-        return isnumber
     
-    columns_attr = get_columns_attr(tablename)
+    def is_number(string):
+        number = True
+        try: float(string)
+        except: number = False
+        return number
+    
+    columns_attr = get_columns_attr(CURSOR,tablename)
     
     columns = []
     values = []
     
-    print('Insert data per each row name (* columns are required):')
+    print('Insert data per each column (* columns are required, ENTER if null):')
     
     for column in columns_attr:
         completed = False
@@ -83,14 +83,19 @@ def insert(CURSOR, tablename):
             elif datatype == 'NUMBER' and not is_number(user_input):
                 print(f'[!] Error, {column[0]} has to be a number')
                 continue
+            
+            # Cheks if item is datetime
+            elif datatype == 'DATETIME' and not is_date(user_input):
+                print(f'[!] Error, not a valid date')
+                continue
                         
             # If all ok...
             else:
                 # If it's a string, add ''
-                if datatype == 'STRING':
+                if datatype == 'STRING' or datatype == 'FIXED_CHAR':
                     user_input = "'" + user_input + "'"
                 # If it's a date, add TO_DATE clause
-                elif is_date:
+                elif datatype == 'DATETIME':
                     user_input = f"TO_DATE('{user_input}', 'dd/mm/yyyy')"
                 
                 # Add result 
@@ -104,6 +109,7 @@ def insert(CURSOR, tablename):
     # Prepare insert statement with customized data
     insert_statement = f'''INSERT INTO {tablename} ({columns}) VALUES ({values})'''
     
+    print(insert_statement)
     # Execute insert to database
     try: CURSOR.execute(insert_statement)
     except:
