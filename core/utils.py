@@ -28,7 +28,7 @@ def show_query(CURSOR, query):
     r = CURSOR.execute(query)
     data = list(r)
     headers = [i[0] for i in r.description]
-    print(tabulate(data, headers=headers))
+    print(tabulate(data, headers=headers, tablefmt='github'))
     return data
 
 # show_query() variant to query whole table
