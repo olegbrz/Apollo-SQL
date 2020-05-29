@@ -3,19 +3,23 @@ import core.config
 import cx_Oracle
 
 def connect_to_server():
-    connection_settings = core.config.get_config()['connection']
 
     dsn_tns = cx_Oracle.makedsn(
-        host=connection_settings['host'],
-        port=connection_settings['port'],
-        sid=connection_settings['sid'])
+        host='afrodita.lcc.uma.es',
+        port=1521,
+        sid='bdsalud')
 
     conn = cx_Oracle.connect(
-        user=connection_settings['user'],
-        password=connection_settings['password'],
-        dsn=dsn_tns)
-
+        user='Uy4903207n',
+        password='y4903207n',
+        dsn=dsn_tns,
+        encoding="UTF-8",
+        nencoding="UTF-8")
+    
+    conn.autocommit = True
+    
     print('\n [i] Connected successfully.\n')
+    
     return conn.cursor()
 
 if __name__ == "__main__":
