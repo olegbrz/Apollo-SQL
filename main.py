@@ -4,19 +4,22 @@ import core.utils
 import cx_Oracle
 
 def connect_to_server():
+    connection_settings = core.config.get_config()['connection']
 
+    # Load dsn info from config.ini
     dsn_tns = cx_Oracle.makedsn(
-        host='afrodita.lcc.uma.es',
-        port=1521,
-        sid='bdsalud')
+        host=connection_settings['host'],
+        port=connection_settings['port'],
+        sid=connection_settings['sid'])
 
     conn = cx_Oracle.connect(
-        user='Uy4903207n',
-        password='y4903207n',
+        user=connection_settings['user'],
+        password=connection_settings['password'],
         dsn=dsn_tns,
         encoding="UTF-8",
         nencoding="UTF-8")
     
+    # Autocommit after change
     conn.autocommit = True
     
     print('[i] Connected successfully.')
@@ -92,6 +95,7 @@ if __name__ == "__main__":
 
         # [0] Exit execution
         elif switch == 0:
+            # Close cursor before exit
             try: CURSOR.close()
             except: pass
             print('\n[i] Good bye.\n')
