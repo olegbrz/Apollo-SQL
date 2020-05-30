@@ -30,21 +30,21 @@ predesigned_queries = [
     GROUP BY departamento_nom_dep
     HAVING MAX(salario) <= (SELECT MAX (salario)
                             FROM empleado
-                            WHERE departamento_nom_dep = 'Diseño');''',
+                            WHERE departamento_nom_dep = 'Diseño')''',
 
     '''SELECT proyecto_nom_proy, MIN(coste) AS COSTE_MINIMO
     FROM producto
     GROUP BY proyecto_nom_proy
     HAVING MIN(coste) < (SELECT MIN (coste)
                          FROM producto
-                         WHERE proyecto_nom_proy = 'Protesis');''',
+                         WHERE proyecto_nom_proy = 'Protesis')''',
 
     '''SELECT departamento_nom_dep, COUNT(departamento_nom_dep)
     FROM empleado
     GROUP BY departamento_nom_dep
     HAVING COUNT(departamento_nom_dep) > (SELECT COUNT(departamento_nom_dep)
                                           FROM empleado
-                                          WHERE departamento_nom_dep = 'Diseño');''',
+                                          WHERE departamento_nom_dep = 'Diseño')''',
     
     # 3
     
