@@ -101,22 +101,22 @@ def insert(CURSOR):
                         
                     # Prevents set to null no nullable elements
                     elif user_input == '' and required:
-                        print(f'\n[!] Error, {column[0]} is required.\n')
+                        print(f'\n(!) Error, {column[0]} is required.\n')
                         continue
                     
                     # Checks if item lenght is valid
                     elif len(user_input) > column[2]:
-                        print(f'\n[!] Error, {column[0]} maximum lenght is {column[2]}.\n')
+                        print(f'\n(!) Error, {column[0]} maximum lenght is {column[2]}.\n')
                         continue
                     
                     # Checks if item is number
                     elif datatype == 'NUMBER' and not is_number(user_input):
-                        print(f'\n[!] Error, {column[0]} has to be a number.\n')
+                        print(f'\n(!) Error, {column[0]} has to be a number.\n')
                         continue
                     
                     # Cheks if item is datetime
                     elif datatype == 'DATETIME' and not is_date(user_input):
-                        print(f'\n[!] Error, not a valid date.\n')
+                        print(f'\n(!) Error, not a valid date.\n')
                         continue
                                 
                     # If all ok...
@@ -157,7 +157,7 @@ def insert(CURSOR):
                 input('Press ENTER')
 
         else:
-            print(f'\n[!] Error, option {selected+1} doesn\'t exist')
+            print(f'\n(!) Error, option {selected+1} doesn\'t exist')
             input('\nPress ENTER')
 
 
@@ -208,7 +208,7 @@ def show_queries(CURSOR):
                     break
                 
                 else:
-                    print(f'\n[!] Error, option {selected} doesn\'t exist')
+                    print(f'\n(!) Error, option {selected} doesn\'t exist')
                     input('\nPress ENTER')
 
         elif selected == 98:
