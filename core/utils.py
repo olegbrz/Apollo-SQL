@@ -1,4 +1,5 @@
 import core.queries
+from core.ui import get_user_input
 from datetime import datetime
 from extra.tabulate.tabulate import tabulate
 
@@ -61,8 +62,10 @@ def insert(CURSOR):
 ==============================================================
 ''')
     for k, v in zip(range(1, len(tables)+1), tables):
-        print('[{:>2}] {}'.format(k, v))
-    print('\n[ 0] BACK')
+        print(' [{:>2}] {}'.format(k, v))
+    print('''\n [ 0] BACK
+
+ ==============================================================''')
 
     try: selected = int(input('\n > ')) - 1
     except: pass
@@ -70,7 +73,7 @@ def insert(CURSOR):
     if selected == -1:
         return
     elif len(tables) - 1 < selected < -1:
-        print(f'\n [!] Error, option {selected} doesn\'t exist')
+        print(f'\n[!] Error, option {selected} doesn\'t exist')
     
     print(f'''
 ==============================================================
@@ -84,6 +87,7 @@ def insert(CURSOR):
     
     print('\nInsert data per each column (* columns are required, ENTER if null):\n')
     
+    # Get user data and check data type per each column
     for column in columns_attr:
         completed = False
         
@@ -142,7 +146,8 @@ def insert(CURSOR):
     # Prepare insert statement with customized data
     insert_statement = f'''INSERT INTO {tables[selected]} ({columns}) VALUES ({values})'''
     
-    user_switch = input(f'\nInsert data to {tables[selected]}? (y/n)\n\n > ')
+    # Check if user is sure about the insert
+    user_switch = input(f'\n[?] Insert data to {tables[selected]}? (y/n)\n\n > ')
 
     if user_switch in ['y', 'Y']:
         # Execute insert to database
@@ -168,39 +173,47 @@ def show_queries(CURSOR):
 ==============================================================
 ''')
         for i, v in zip(range(1, len(desc)+1), desc):
-            print('[{:>2}] {}'.format(i, v))
+            print(' [{:>2}] {}'.format(i, v))
         print('''
-[98] Query whole table
-[99] Customized query (SQL)
+ [98] Query whole table
+ [99] Customized query (SQL)
 
-[ 0] BACK''')
+ [ 0] BACK
 
-        try: selected = int(input('\n > ')) - 1
-        except: pass
+ ==============================================================''')
 
-        if selected == -1:
+        selected = get_user_input() - 1
+
+        if selected == -2:
+            input('\nPress ENTER')
+            continue
+
+        elif selected == -1:
             break
         elif len(desc) - 1 < selected < -1 and selected != 98 and selected != 99:
-            print(f'\n [!] Error, option {selected} doesn\'t exist')
+            print(f'\n[!] Error, option {selected} doesn\'t exist')
 
         if selected == 97:
             tables = get_tables(CURSOR)
             for i, table_name in zip(range(1, len(tables)+1), tables):
-                print('[{:>2}] {}'.format(i, table_name))
-            print('\n[ 0] BACK')
+                print(' [{:>2}] {}'.format(i, table_name))
+            print('\n [ 0] BACK')
 
-            try: selected = int(input('\n > ')) - 1
-            except: pass
+            selected = get_user_input() - 1
 
-            if selected == -1:
-                return
+            if selected == -2:
+                input('\nPress ENTER')
+                continue
+            
+            elif selected == -1: return
+            
             elif len(tables) - 1 < selected < -1:
-                print(f'\n [!] Error, option {selected} doesn\'t exist')
-
-            query = f'SELECT * FROM {tables[selected]}'
+                print(f'\n[!] Error, option {selected} doesn\'t exist')
+            
+            else: query = f'SELECT * FROM {tables[selected]}'
 
         elif selected == 98:
-            query = input('[?] Type your customized SQL query\n\n> ')
+            query = input('\n[?] Type your customized SQL query\n\n > ')
         else:
             query = quer[selected]
         print('''
@@ -208,6 +221,6 @@ def show_queries(CURSOR):
    QUERY RESULT
 ==============================================================
 ''')
-
-        show_query(CURSOR, query)
-        input('\nPress ENTER')
+        try: show_query(CURSOR, query) 
+        except: print('\n[!] An error has ocurred.')
+        finally: input('\nPress ENTER')
