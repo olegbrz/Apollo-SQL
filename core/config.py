@@ -2,6 +2,7 @@ from configparser import ConfigParser
 from getpass import getpass
 from os.path import exists
 
+
 def init_config():
     config = ConfigParser()
     config.add_section('connection')
@@ -11,11 +12,13 @@ def init_config():
     with open('config.ini', 'w+') as configfile:
         config.write(configfile)
 
+
 def get_config():
     config = ConfigParser()
     config.read('config.ini')
 
     return config._sections
+
 
 def set_config(section, param, value):
     config = ConfigParser()
@@ -23,6 +26,7 @@ def set_config(section, param, value):
     config.set(section, param, value)
     with open('config.ini', 'w+') as configfile:
         config.write(configfile)
+
 
 def modify_config(index):
     config = get_config()['connection']
@@ -33,6 +37,7 @@ def modify_config(index):
     else:
         value = input(f'\nInput new {values[index]} > ')
     set_config('connection', values[index], value)
+
 
 if not exists('config.ini'):
     init_config()

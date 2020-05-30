@@ -14,6 +14,7 @@ banner = r'''==============================================================
      (c) Lucía Arrabalí, Oleg Brezitskyy, Ainoa Fernández
                 Sergio Martín, Viktor Yosava'''
 
+
 def menu(conn=''):
     menu = f'''
 ==============================================================
@@ -31,6 +32,7 @@ def menu(conn=''):
 =============================================================={conn}
 '''
     return menu
+
 
 bar = '''
 ==============================================================
@@ -66,11 +68,13 @@ insert_data_footer = '''\n [ 0] BACK
 
 =============================================================='''
 
+
 def inserting_into(tablename):
     return f'''
 ==============================================================
    INSERTING INTO {tablename}
 =============================================================='''
+
 
 query_result = '''
 ==============================================================
@@ -80,14 +84,19 @@ query_result = '''
 
 # FUNCTIONS
 
+
 def print_banner(): print(banner)
+
 
 def print_menu(connected_to):
     print(menu(connected_to))
-    try: mode = int(input('> '))
-    except: pass
+    try:
+        mode = int(input('> '))
+    except:
+        pass
 
     return mode
+
 
 def print_settings():
     print(settings)
@@ -96,19 +105,22 @@ def print_settings():
     while 1:
 
         for i, k, v in zip(range(1, len(config) + 1), config.keys(), config.values()):
-            if k == 'password': v = '*' * len(v)
+            if k == 'password':
+                v = '*' * len(v)
             print(f' [{i}] {k}:\t{v}')
         print(f'\n [0] BACK\n{bar}')
-        
+
         mode = get_user_input()
 
-        if mode == -1: input('\nPress ENTER')
-        else: return mode
+        if mode == -1:
+            input('\nPress ENTER')
+        else:
+            return mode
 
 
 def get_user_input():
     selected = input('\n > ')
-    
+
     if not selected.isnumeric():
         print('\n(!) Error. Please, enter a number.')
         return -1

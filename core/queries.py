@@ -1,7 +1,7 @@
 predesigned_queries = [
 
     # 1
-    
+
     '''SELECT empleado.nombre, familiar.nombre, relacion, empleado.departamento_nom_dep
     FROM familiar, empleado, departamento 
     WHERE familiar.relacion = 'Hermana' AND empleado.id = familiar.empleado_id AND departamento.numero = 1''',
@@ -21,10 +21,10 @@ predesigned_queries = [
     '''SELECT producto.nom_prod, empleado.nombre, empleado.apellidos
     FROM producto, proyecto, departamento, empleado
     WHERE producto.id_producto = '1' and producto.proyecto_nom_proy = proyecto.nom_proy
-    and proyecto.departamento_nom_dep = departamento.nom_dep and empleado.departamento_nom_dep = departamento.nom_dep''' ,
-    
+    and proyecto.departamento_nom_dep = departamento.nom_dep and empleado.departamento_nom_dep = departamento.nom_dep''',
+
     # 2
-    
+
     '''SELECT departamento_nom_dep, MAX(salario) AS SALARIO_MAXIMO
     FROM empleado
     GROUP BY departamento_nom_dep
@@ -45,9 +45,9 @@ predesigned_queries = [
     HAVING COUNT(departamento_nom_dep) > (SELECT COUNT(departamento_nom_dep)
                                           FROM empleado
                                           WHERE departamento_nom_dep = 'Diseño')''',
-    
+
     # 3
-    
+
     '''SELECT empleado_id, empleado_nif
     FROM disenador_ind 
     WHERE empleado_nif IN(SELECT nif FROM empleado WHERE ciudad = 'Málaga')''',
@@ -61,13 +61,13 @@ predesigned_queries = [
     WHERE nom_proy = ANY(SELECT proyecto_nom_proy FROM producto WHERE coste>2000)''',
 
     # 4
-    
+
     '''SELECT empleado.id, empleado.nif, empleado.departamento_nom_dep
     FROM empleado
     WHERE NOT EXISTS (SELECT 1
                       FROM departamento
-                      WHERE departamento.empleado_nif = empleado.nif)''' ,
-    
+                      WHERE departamento.empleado_nif = empleado.nif)''',
+
     '''SELECT *
     FROM empresa_ext
     WHERE NOT EXISTS (SELECT 1
@@ -80,7 +80,7 @@ predesigned_queries = [
                       WHERE producto.proyecto_nom_proy = proyecto.nom_proy)''',
 
     # 5
-    
+
     ''' SELECT nif, nombre, apellidos, sexo, departamento_nom_dep, salario
     FROM empleado
     WHERE departamento_nom_dep = 'Investigación' AND salario>ALL(SELECT salario
@@ -126,12 +126,12 @@ descriptions = [
     '''Show info of employee from department number 1 and his relative''',
 
     '''Show product with code 1 and employees working on it''',
-    
+
 
     # 2
 
     '''Show maximum wage of employees that's less than the maximum wage of employees from Design department''',
-    
+
     '''Show ptojects where cost is less than the minimum cost of prosthesis project''',
 
     '''Show departments that have more employees than Design department''',
@@ -139,7 +139,7 @@ descriptions = [
     # 3
 
     '''Show Industrial Designers from Málaga''',
-    
+
     '''Show department directors''',
 
     '''Show projects whose cost is more than 2000''',
@@ -147,7 +147,7 @@ descriptions = [
     # 4
 
     '''Show all employes that aren't from Design department''',
-    
+
     '''Show all external enterprises that aren't universities''',
 
     '''Show all products that aren't in prosthesis''',
@@ -155,7 +155,7 @@ descriptions = [
     # 5
 
     '''Show employees that aren't directors of departments''',
-    
+
     '''Show external enterprises that aren't universities''',
 
     '''Show projects that haven't any products''',
