@@ -1,5 +1,7 @@
 import core.config
 
+# CLI ELEMENTS
+
 banner = r'''==============================================================
         ___                ____         _____ ____    __ 
        /   |  ____  ____  / / /___     / ___// __ \  / /
@@ -40,6 +42,44 @@ settings = '''
 ==============================================================
 '''
 
+query_data_header = '''
+==============================================================
+   QUERY DATA
+==============================================================
+'''
+
+query_data_footer = '''
+ [98] Query whole table
+ [99] Customized query (SQL)
+
+ [ 0] BACK
+
+=============================================================='''
+
+insert_data_header = '''
+==============================================================
+   INSERT DATA
+==============================================================
+'''
+
+insert_data_footer = '''\n [ 0] BACK
+
+=============================================================='''
+
+def inserting_into(tablename):
+    return f'''
+==============================================================
+   INSERTING INTO {tablename}
+=============================================================='''
+
+query_result = '''
+==============================================================
+   QUERY RESULT
+==============================================================
+'''
+
+# FUNCTIONS
+
 def print_banner(): print(banner)
 
 def print_menu(connected_to):
@@ -67,10 +107,10 @@ def print_settings():
 
 
 def get_user_input():
-    selected = input(' > ')
+    selected = input('\n > ')
     
     if not selected.isnumeric():
-        print('(!) Error. Please, enter a number.')
+        print('\n(!) Error. Please, enter a number.')
         return -1
     else:
         selected = int(selected)
