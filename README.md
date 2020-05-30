@@ -30,7 +30,8 @@ It works as a CLI (command-line interface), so you just need a command line to w
 
 ## Demo
 
-<img src="images/demo.png" width="400" align="center">
+<img src="images/demo.png" width="400">
+<img src="images/demo1.png" width="400">
 
 ## External packages (included)
 
