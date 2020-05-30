@@ -20,6 +20,7 @@ def connect_to_server():
     conn.autocommit = True
     
     print('\n [i] Connected successfully.\n')
+    input('Press ENTER')
     
     return conn.cursor()
 
@@ -46,17 +47,20 @@ if __name__ == "__main__":
                     connected_to = f'\n [i] Connected to {host}:{port} as {user}'
                 except:
                     print('\n [!] Connection failed, please check settings.')
+                    input('Press ENTER')
             else:
                 try:
                     CURSOR.close()
                     connected_to = ''
                     print('\n [i] Disconnected successfully.')
+                    input('Press ENTER')
                 except: pass
             
         # T[2] Query data function
         elif switch == 2:
             if connected_to == '':
                 print('\n[!] Error, no connection was detected.')
+                input('Press ENTER')
                 continue
             core.utils.show_queries(CURSOR)
 
@@ -67,6 +71,7 @@ if __name__ == "__main__":
         elif switch == 4:
             if connected_to == '':
                 print('\n[!] Error, no connection was detected.')
+                input('Press ENTER')
                 continue
             core.utils.insert(CURSOR)
 
@@ -75,10 +80,13 @@ if __name__ == "__main__":
             option = 1
             while option != 0:
                 option = core.ui.print_settings()
-                if option != 0:
+                if option != 0 and option < 6:
                     core.config.modify_config(option)
                     # Refresh settings
                     settings = core.config.get_config()
+                else:
+                    print('\n(!) Error, option {option} doesn\'t exist.')
+                    input('Press ENTER')
 
         # [0] Exit execution
         elif switch == 0:
@@ -87,4 +95,6 @@ if __name__ == "__main__":
             print('\n Good bye!\n')
             break
 
-        else: print(f'\n (!) Error, option {switch} doesn\'t exist.')
+        else:
+            print(f'\n (!) Error, option {switch} doesn\'t exist.')
+            input('Press ENTER')

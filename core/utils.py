@@ -55,10 +55,14 @@ def insert(CURSOR):
     
     tables = get_tables(CURSOR)
     
-    print('\n [i] Please, select table:\n')
+    print('''
+==============================================================
+   INSERT DATA
+==============================================================
+''')
     for k, v in zip(range(1, len(tables)+1), tables):
-        print(f' [{k}]\t{v}')
-    print(' [0]\tBACK')
+        print('[{:>2}] {}'.format(k, v))
+    print('\n[ 0] BACK')
 
     try: selected = int(input('\n > ')) - 1
     except: pass
@@ -68,7 +72,10 @@ def insert(CURSOR):
     elif len(tables) - 1 < selected < -1:
         print(f'\n [!] Error, option {selected} doesn\'t exist')
     
-    print(f'\nINSERTING INTO: {tables[selected]}')
+    print(f'''
+==============================================================
+   INSERTING INTO {tables[selected]}
+==============================================================''')
     
     columns_attr = get_columns_attr(CURSOR, tables[selected])
     
@@ -97,22 +104,22 @@ def insert(CURSOR):
                 
             # Prevents set to null no nullable elements
             elif user_input == '' and required:
-                print(f'[!] Error, {column[0]} is required.')
+                print(f'\n[!] Error, {column[0]} is required.\n')
                 continue
             
             # Checks if item lenght is valid
             elif len(user_input) > column[2]:
-                print(f'[!] Error, {column[0]} maximum lenght is {column[2]}')
+                print(f'\n[!] Error, {column[0]} maximum lenght is {column[2]}.\n')
                 continue
             
             # Checks if item is number
             elif datatype == 'NUMBER' and not is_number(user_input):
-                print(f'[!] Error, {column[0]} has to be a number')
+                print(f'\n[!] Error, {column[0]} has to be a number.\n')
                 continue
             
             # Cheks if item is datetime
             elif datatype == 'DATETIME' and not is_date(user_input):
-                print(f'[!] Error, not a valid date')
+                print(f'\n[!] Error, not a valid date.\n')
                 continue
                         
             # If all ok...
@@ -135,7 +142,7 @@ def insert(CURSOR):
     # Prepare insert statement with customized data
     insert_statement = f'''INSERT INTO {tables[selected]} ({columns}) VALUES ({values})'''
     
-    user_switch = input(f'\nInsert data to {tables[selected]}? (y/n)\n > ')
+    user_switch = input(f'\nInsert data to {tables[selected]}? (y/n)\n\n > ')
 
     if user_switch in ['y', 'Y']:
         # Execute insert to database
@@ -146,7 +153,8 @@ def insert(CURSOR):
             print('\n[i] Insert executed successfully.')
 
     elif user_switch in ['n', 'N']:
-        print('\n[i] Okay, INSERT cancelled.\n')
+        print('\n[i] Okay, INSERT cancelled.')
+        input('Press ENTER')
 
 
 def show_queries(CURSOR):
@@ -154,20 +162,47 @@ def show_queries(CURSOR):
     desc = core.queries.descriptions
 
     while 1:
-        print('\n [i] Please, select query:\n')
+        print('''
+==============================================================
+   QUERY DATA
+==============================================================
+''')
         for i, v in zip(range(1, len(desc)+1), desc):
-            print(f'[{i}]: {v}')
-        print('[0] BACK')
+            print('[{:>2}] {}'.format(i, v))
+        print('''
+[98] Query whole table
+[99] Customized query (SQL)
+
+[ 0] BACK''')
 
         try: selected = int(input('\n > ')) - 1
         except: pass
 
         if selected == -1:
             break
-        elif len(desc) - 1 < selected < -1:
+        elif len(desc) - 1 < selected < -1 and selected != 98 and selected != 99:
             print(f'\n [!] Error, option {selected} doesn\'t exist')
 
-        query = quer[selected]
+        if selected == 97:
+            tables = get_tables(CURSOR)
+            for i, table_name in zip(range(1, len(tables)+1), tables):
+                print('[{:>2}] {}'.format(i, table_name))
+            print('\n[ 0] BACK')
+
+            try: selected = int(input('\n > ')) - 1
+            except: pass
+
+            if selected == -1:
+                return
+            elif len(tables) - 1 < selected < -1:
+                print(f'\n [!] Error, option {selected} doesn\'t exist')
+
+            query = f'SELECT * FROM {tables[selected]}'
+
+        elif selected == 98:
+            query = input('[?] Type your customized SQL query\n\n> ')
+        else:
+            query = quer[selected]
         print('''
 ==============================================================
    QUERY RESULT
