@@ -33,6 +33,7 @@ if __name__ == "__main__":
         try: switch = core.ui.print_menu(connected_to)
         except:
             print('\n(!) Please, check your selection.')
+            input('\nPress ENTER')
             continue
 
         # [1] Connect/disconnect option
