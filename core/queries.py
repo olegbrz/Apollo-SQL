@@ -161,4 +161,11 @@ descriptions = [
     '''Show projects that haven't any products''',
 
     # 6
+
+    '''Show the events ordered by their duration''',
+
+    '''Show average wage by departament in descending order''',
+
+    '''Show employees ordered by their age''',
+
 ]
