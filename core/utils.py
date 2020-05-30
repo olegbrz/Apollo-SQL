@@ -1,5 +1,5 @@
 import core.queries
-from core.ui import get_user_input
+import core.ui
 from datetime import datetime
 from extra.tabulate.tabulate import tabulate
 
@@ -31,14 +31,10 @@ def show_query(CURSOR, query):
     data = list(r)
     headers = [i[0] for i in r.description]
     print(tabulate(data, headers=headers, tablefmt='fancy_grid'))
+    
     return data
 
-# show_query() variant to query whole table
-def show_table(CURSOR, tablename):
-    query = f'SELECT * FROM {tablename}'
-    show_query(CURSOR, query)
-
-# Insert function with CLI prompt included
+# INSERT FUNCTION
 def insert(CURSOR):
     
     def is_date(string):
@@ -56,171 +52,174 @@ def insert(CURSOR):
     
     tables = get_tables(CURSOR)
     
-    print('''
-==============================================================
-   INSERT DATA
-==============================================================
-''')
-    for k, v in zip(range(1, len(tables)+1), tables):
-        print(' [{:>2}] {}'.format(k, v))
-    print('''\n [ 0] BACK
+    while 1:
 
- ==============================================================''')
+        print(core.ui.insert_data_header)
 
-    try: selected = int(input('\n > ')) - 1
-    except: pass
+        for k, v in zip(range(1, len(tables)+1), tables):
+            print(' [{:>2}] {}'.format(k, v))
 
-    if selected == -1:
-        return
-    elif len(tables) - 1 < selected < -1:
-        print(f'\n[!] Error, option {selected} doesn\'t exist')
-    
-    print(f'''
-==============================================================
-   INSERTING INTO {tables[selected]}
-==============================================================''')
-    
-    columns_attr = get_columns_attr(CURSOR, tables[selected])
-    
-    columns = []
-    values = []
-    
-    print('\nInsert data per each column (* columns are required, ENTER if null):\n')
-    
-    # Get user data and check data type per each column
-    for column in columns_attr:
-        completed = False
+        print(core.ui.insert_data_footer)
+
+        selected = core.ui.get_user_input() - 1
         
-        required = bool(not column[6])
-        datatype = column[1].__name__
+        if selected == -2:
+            input('\nPress ENTER')
+            continue
+
+        elif selected == -1: return
+
+        elif selected in [-1] + list(range(0, len(tables))):
         
-        if datatype == 'DATETIME': date_format = " (Format dd/mm/yyyy) "
-        else: date_format = ""
+            print(core.ui.inserting_into(tables[selected]))
             
-        while not completed:
-            # Asks user for data
-            user_input = input(f' ({datatype}){date_format}: {column[0]}{"*" if required else ""}: ').strip()
+            columns_attr = get_columns_attr(CURSOR, tables[selected])
             
-            # If item is null and that's ok, pass
-            if user_input == '' and not required:
-                completed = True
-                continue
+            columns = []
+            values = []
+            
+            print('\nInsert data per each column (* columns are required, ENTER if null):\n')
+            
+            # Get user data and check data type per each column
+            for column in columns_attr:
+
+                completed = False
+                required = bool(not column[6])
+                datatype = column[1].__name__
                 
-            # Prevents set to null no nullable elements
-            elif user_input == '' and required:
-                print(f'\n[!] Error, {column[0]} is required.\n')
-                continue
-            
-            # Checks if item lenght is valid
-            elif len(user_input) > column[2]:
-                print(f'\n[!] Error, {column[0]} maximum lenght is {column[2]}.\n')
-                continue
-            
-            # Checks if item is number
-            elif datatype == 'NUMBER' and not is_number(user_input):
-                print(f'\n[!] Error, {column[0]} has to be a number.\n')
-                continue
-            
-            # Cheks if item is datetime
-            elif datatype == 'DATETIME' and not is_date(user_input):
-                print(f'\n[!] Error, not a valid date.\n')
-                continue
+                if datatype == 'DATETIME': date_format = " (Format dd/mm/yyyy) "
+                else: date_format = ""
+                    
+                while not completed:
+                    # Asks user for data
+                    user_input = input(f' ({datatype}){date_format}: {column[0]}{"*" if required else ""}: ').strip()
+                    
+                    # If item is null and that's ok, pass
+                    if user_input == '' and not required:
+                        completed = True
+                        continue
                         
-            # If all ok...
+                    # Prevents set to null no nullable elements
+                    elif user_input == '' and required:
+                        print(f'\n[!] Error, {column[0]} is required.\n')
+                        continue
+                    
+                    # Checks if item lenght is valid
+                    elif len(user_input) > column[2]:
+                        print(f'\n[!] Error, {column[0]} maximum lenght is {column[2]}.\n')
+                        continue
+                    
+                    # Checks if item is number
+                    elif datatype == 'NUMBER' and not is_number(user_input):
+                        print(f'\n[!] Error, {column[0]} has to be a number.\n')
+                        continue
+                    
+                    # Cheks if item is datetime
+                    elif datatype == 'DATETIME' and not is_date(user_input):
+                        print(f'\n[!] Error, not a valid date.\n')
+                        continue
+                                
+                    # If all ok...
+                    else:
+                        # If it's a string, add ''
+                        if datatype in ['STRING', 'FIXED_CHAR']:
+                            user_input = "'" + user_input + "'"
+                        
+                        # If it's a date, add TO_DATE clause
+                        elif datatype == 'DATETIME':
+                            user_input = f"TO_DATE('{user_input}', 'dd/mm/yyyy')"
+                        
+                        # Add result 
+                        columns.append(column[0])
+                        values.append(user_input)
+                        completed = True
+            
+            # Generate columns and values string for INSERT statement
+            values = ", ".join(values)
+            columns = ", ".join(columns)
+            
+            # Prepare insert statement with customized data
+            insert_statement = f'''INSERT INTO {tables[selected]} ({columns}) VALUES ({values})'''
+            
+            # Check if user is sure about the insert
+            user_switch = input(f'\n[?] Insert data to {tables[selected]}? (y/n)\n\n > ')
+
+            if user_switch in ['y', 'Y']:
+                # Execute insert to database
+                try: CURSOR.execute(insert_statement)
+                except:
+                    print('\n[!] Something went wrong, insert failed. Please, check item data types.')
+                else:
+                    print('\n[i] Insert executed successfully.')
+
             else:
-                # If it's a string, add ''
-                if datatype == 'STRING' or datatype == 'FIXED_CHAR':
-                    user_input = "'" + user_input + "'"
-                # If it's a date, add TO_DATE clause
-                elif datatype == 'DATETIME':
-                    user_input = f"TO_DATE('{user_input}', 'dd/mm/yyyy')"
-                
-                # Add result 
-                columns.append(column[0])
-                values.append(user_input)
-                completed = True
-    
-    values = ", ".join(values)
-    columns = ", ".join(columns)
-    
-    # Prepare insert statement with customized data
-    insert_statement = f'''INSERT INTO {tables[selected]} ({columns}) VALUES ({values})'''
-    
-    # Check if user is sure about the insert
-    user_switch = input(f'\n[?] Insert data to {tables[selected]}? (y/n)\n\n > ')
+                print('\n(!) INSERT cancelled.')
+                input('Press ENTER')
 
-    if user_switch in ['y', 'Y']:
-        # Execute insert to database
-        try: CURSOR.execute(insert_statement)
-        except:
-            print('\n[!] Something went wrong, insert failed. Please, check item data types.')
         else:
-            print('\n[i] Insert executed successfully.')
-
-    elif user_switch in ['n', 'N']:
-        print('\n[i] Okay, INSERT cancelled.')
-        input('Press ENTER')
+            print(f'\n[!] Error, option {selected+1} doesn\'t exist')
+            input('\nPress ENTER')
 
 
+
+# QUERIES FUNCTION
 def show_queries(CURSOR):
+
     quer = core.queries.predesigned_queries
     desc = core.queries.descriptions
 
     while 1:
-        print('''
-==============================================================
-   QUERY DATA
-==============================================================
-''')
+        print(core.ui.query_data_header)
         for i, v in zip(range(1, len(desc)+1), desc):
             print(' [{:>2}] {}'.format(i, v))
-        print('''
- [98] Query whole table
- [99] Customized query (SQL)
+        print(core.ui.query_data_footer)
 
- [ 0] BACK
-
- ==============================================================''')
-
-        selected = get_user_input() - 1
+        selected = core.ui.get_user_input() - 1
 
         if selected == -2:
             input('\nPress ENTER')
             continue
 
-        elif selected == -1:
-            break
-        elif len(desc) - 1 < selected < -1 and selected != 98 and selected != 99:
-            print(f'\n[!] Error, option {selected} doesn\'t exist')
+        elif selected == -1: break
 
-        if selected == 97:
+        elif selected in list(range(0, len(desc))):
+            query = quer[selected]
+
+        elif selected == 97:
+
             tables = get_tables(CURSOR)
-            for i, table_name in zip(range(1, len(tables)+1), tables):
-                print(' [{:>2}] {}'.format(i, table_name))
-            print('\n [ 0] BACK')
 
-            selected = get_user_input() - 1
+            while 1:
+                for i, table_name in zip(range(1, len(tables)+1), tables):
+                    print(' [{:>2}] {}'.format(i, table_name))
+                print('\n [ 0] BACK')
 
-            if selected == -2:
-                input('\nPress ENTER')
-                continue
-            
-            elif selected == -1: return
-            
-            elif len(tables) - 1 < selected < -1:
-                print(f'\n[!] Error, option {selected} doesn\'t exist')
-            
-            else: query = f'SELECT * FROM {tables[selected]}'
+                selected = core.ui.get_user_input() - 1
+
+                if selected == -2:
+                    input('\nPress ENTER')
+                    continue
+                
+                elif selected == -1:
+                    break
+                
+                elif selected in list(range(0, len(tables))):
+                    query = f'SELECT * FROM {tables[selected]}'
+                    break
+                
+                else:
+                    print(f'\n[!] Error, option {selected} doesn\'t exist')
+                    input('\nPress ENTER')
 
         elif selected == 98:
             query = input('\n[?] Type your customized SQL query\n\n > ')
+        
         else:
-            query = quer[selected]
-        print('''
-==============================================================
-   QUERY RESULT
-==============================================================
-''')
+            print(f'\n(!) Error, option {selected+1} doesn\'t exist')
+            input('\nPress ENTER')
+        
+        print(core.ui.query_result)
+
         try: show_query(CURSOR, query) 
-        except: print('\n[!] An error has ocurred.')
+        except: print('\n(!) An error has occurred.')
         finally: input('\nPress ENTER')
