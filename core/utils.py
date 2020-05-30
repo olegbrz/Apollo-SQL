@@ -1,3 +1,4 @@
+import core.queries
 from datetime import datetime
 from extra.tabulate.tabulate import tabulate
 
@@ -28,7 +29,7 @@ def show_query(CURSOR, query):
     r = CURSOR.execute(query)
     data = list(r)
     headers = [i[0] for i in r.description]
-    print(tabulate(data, headers=headers, tablefmt='github'))
+    print(tabulate(data, headers=headers, tablefmt='fancy_grid'))
     return data
 
 # show_query() variant to query whole table
@@ -57,9 +58,15 @@ def insert(CURSOR):
     print('\n [i] Please, select table:\n')
     for k, v in zip(range(1, len(tables)+1), tables):
         print(f' [{k}]\t{v}')
+    print(' [0]\tBACK')
 
-    try: selected = int(input('> ')) - 1
+    try: selected = int(input('\n > ')) - 1
     except: pass
+
+    if selected == -1:
+        return
+    elif len(tables) - 1 < selected < -1:
+        print(f'\n [!] Error, option {selected} doesn\'t exist')
     
     print(f'\nINSERTING INTO: {tables[selected]}')
     
@@ -137,6 +144,35 @@ def insert(CURSOR):
             print('\n[!] Something went wrong, insert failed. Please, check item data types.')
         else:
             print('\n[i] Insert executed successfully.')
-            
+
     elif user_switch in ['n', 'N']:
         print('\n[i] Okay, INSERT cancelled.\n')
+
+
+def show_queries(CURSOR):
+    quer = core.queries.predesigned_queries
+    desc = core.queries.descriptions
+
+    while 1:
+        print('\n [i] Please, select query:\n')
+        for i, v in zip(range(1, len(desc)+1), desc):
+            print(f'[{i}]: {v}')
+        print('[0] BACK')
+
+        try: selected = int(input('\n > ')) - 1
+        except: pass
+
+        if selected == -1:
+            break
+        elif len(desc) - 1 < selected < -1:
+            print(f'\n [!] Error, option {selected} doesn\'t exist')
+
+        query = quer[selected]
+        print('''
+==============================================================
+   QUERY RESULT
+==============================================================
+''')
+
+        show_query(CURSOR, query)
+        input('\nPress ENTER')
