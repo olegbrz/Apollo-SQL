@@ -53,13 +53,25 @@ def print_settings():
     print(settings)
     config = core.config.get_config()['connection']
 
-    for i, k, v in zip(range(1, len(config) + 1), config.keys(), config.values()):
-        if k == 'password': v = '*' * len(v)
-        print(f' [{i}] {k}:\t{v}')
-    print(f'\n [0] BACK\n{bar}')
-     
-    try: mode = int(input('> '))
-    except: pass
+    while 1:
 
-    return mode
+        for i, k, v in zip(range(1, len(config) + 1), config.keys(), config.values()):
+            if k == 'password': v = '*' * len(v)
+            print(f' [{i}] {k}:\t{v}')
+        print(f'\n [0] BACK\n{bar}')
+        
+        mode = get_user_input()
 
+        if mode == -1: input('\nPress ENTER')
+        else: return mode
+
+
+def get_user_input():
+    selected = input(' > ')
+    
+    if not selected.isnumeric():
+        print('(!) Error. Please, enter a number.')
+        return -1
+    else:
+        selected = int(selected)
+        return selected
