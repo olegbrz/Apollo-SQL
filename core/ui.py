@@ -20,8 +20,9 @@ def menu(conn=''):
 
  [1] {'DIS' if conn else ''}CONNECT
  [2] QUERY DATA
- [3] ALTER DATA
- [4] SETTINGS
+ [3] RELATE DATA
+ [4] INSERT DATA
+ [5] SETTINGS
 
  [0] EXIT
 
