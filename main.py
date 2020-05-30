@@ -53,10 +53,16 @@ if __name__ == "__main__":
                     print('\n [i] Disconnected successfully.')
                 except: pass
             
-        # TODO: [2] Query data function
-        elif switch == 2: pass
+        # T[2] Query data function
+        elif switch == 2:
+            if connected_to == '':
+                print('\n[!] Error, no connection was detected.')
+                continue
+            core.utils.show_queries(CURSOR)
+
         # TODO: [3] Alter data function
         elif switch == 3: pass
+        
         # [4] Isert data function
         elif switch == 4:
             if connected_to == '':
