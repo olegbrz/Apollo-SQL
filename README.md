@@ -2,7 +2,7 @@
 
 ![banner](https://drive.google.com/uc?export=view&id=1DyQ7Sox8FsRVNaRPd1JLqGB8u8WPR805)
 
-Apollo SQL is a lightweight Oracle database manager developed by a group of students from Málaga's University.
+Apollo SQL is a lightweight (140 KB!) Oracle database manager developed by a group of students from Málaga's University.
 
 This CLI program written in Python allows you to connect to remote database to query and relate data with predesigned queries (modify `./core/queries.py`), show whole tables, and insert data into them.
 
