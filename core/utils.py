@@ -17,19 +17,19 @@ def get_tables(CURSOR):
 def get_columns_attr(CURSOR, tablename):
     query = f'''
     SELECT * from {tablename}'''
-    r = CURSOR.execute(query)
-    return r.description
+    response = CURSOR.execute(query)
+    return response.description
 
 # Get columns names in a list
 def get_column_names(CURSOR, tablename):
-    r = get_columns_attr(CURSOR, tablename)
-    return [i[0] for i in r]
+    response = get_columns_attr(CURSOR, tablename)
+    return [i[0] for i in response]
 
 # Prints query result with tabulate
 def show_query(CURSOR, query):
-    r = CURSOR.execute(query)
-    data = list(r)
-    headers = [i[0] for i in r.description]
+    response = CURSOR.execute(query)
+    data = list(response)
+    headers = [i[0] for i in response.description]
     print(tabulate(data, headers=headers, tablefmt='fancy_grid'))
     
     return data
