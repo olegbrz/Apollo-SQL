@@ -54,8 +54,9 @@ def insert(CURSOR):
     
     tables = get_tables(CURSOR)
     
+    print('\n [i] Please, select table:\n')
     for k, v in zip(range(1, len(tables)+1), tables):
-        print(f'\t[{k}]\t{v}')
+        print(f' [{k}]\t{v}')
 
     try: selected = int(input('> ')) - 1
     except: pass
@@ -67,7 +68,7 @@ def insert(CURSOR):
     columns = []
     values = []
     
-    print('\nInsert data per each column (* columns are required, ENTER if null):')
+    print('\nInsert data per each column (* columns are required, ENTER if null):\n')
     
     for column in columns_attr:
         completed = False
@@ -80,7 +81,7 @@ def insert(CURSOR):
             
         while not completed:
             # Asks user for data
-            user_input = input(f'\t({datatype}){date_format}: {column[0]}{"*" if required else ""}: ').strip()
+            user_input = input(f' ({datatype}){date_format}: {column[0]}{"*" if required else ""}: ').strip()
             
             # If item is null and that's ok, pass
             if user_input == '' and not required:
@@ -127,10 +128,15 @@ def insert(CURSOR):
     # Prepare insert statement with customized data
     insert_statement = f'''INSERT INTO {tables[selected]} ({columns}) VALUES ({values})'''
     
-    print(insert_statement)
-    # Execute insert to database
-    try: CURSOR.execute(insert_statement)
-    except:
-        print('[!] Something went wrong, insert failed. Please, check item data types.')
-    else:
-        print('[i] Insert executed successfully.')
+    user_switch = input(f'\nInsert data to {tables[selected]}? (y/n)\n > ')
+
+    if user_switch in ['y', 'Y']:
+        # Execute insert to database
+        try: CURSOR.execute(insert_statement)
+        except:
+            print('\n[!] Something went wrong, insert failed. Please, check item data types.')
+        else:
+            print('\n[i] Insert executed successfully.')
+            
+    elif user_switch in ['n', 'N']:
+        print('\n[i] Okay, INSERT cancelled.\n')
