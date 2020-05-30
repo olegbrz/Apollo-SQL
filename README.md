@@ -1,6 +1,6 @@
 # Apollo SQL
 
-![banner](https://drive.google.com/uc?export=view&id=1DyQ7Sox8FsRVNaRPd1JLqGB8u8WPR805)
+![banner](images/apollo_banner.png)
 
 Apollo SQL is a lightweight (140 KB!) Oracle database manager developed by a group of students from Málaga's University.
 
@@ -27,6 +27,10 @@ python main.py
 ```
 
 It works as a CLI (command-line interface), so you just need a command line to work with it.
+
+## Demo
+
+<img src="images/demo.png" width="400" align="center">
 
 ## External packages (included)
 
