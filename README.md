@@ -4,7 +4,7 @@
 
 Apollo SQL is a lightweight Oracle database manager developed by a group of students from Málaga's University.
 
-This CLI program written in Python allows you to connect to remote database to query and relate data with predesigned queries (modify `./core/queries.sql` and `./core/queries.py`), show whole tables, and insert data into them.
+This CLI program written in Python allows you to connect to remote database to query and relate data with predesigned queries (modify [`core/queries.sql`](core/queries.sql) and [`core/queries.py`](core/queries.py)), show whole tables, and insert data into them.
 
 ## Installation
 
@@ -20,7 +20,7 @@ git clone https://github.com/olegbrz/Apollo-SQL.git
 
 ## Usage
 
-The usage is pretty simple, just launch the `main.py` file:
+The usage is pretty simple, just launch the [`main.py`](main.py) file:
 
 ```bash
 python main.py
@@ -34,6 +34,6 @@ It works as a CLI (command-line interface), so you just need a command line to w
 
 ## External packages (included)
 
-The program uses external open-source packages (license included in every package in `./extra/`):
+The program uses external open-source packages (license included in every package in [`extra/`](extra/)):
 
 - [tabulate 0.8.7](https://pypi.org/project/tabulate/)
