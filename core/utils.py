@@ -3,6 +3,14 @@ import core.ui
 from datetime import datetime
 from extra.tabulate.tabulate import tabulate
 
+# Get customized queries from queries.sql and queries.py files
+def get_queries():
+    f = open('core/queries.sql', encoding='utf-8')
+    full_sql = f.read()
+    sql_commands = full_sql.split(';')
+
+    queries = [sql_command for sql_command in sql_commands]
+    return queries
 
 # Get all user tables in a list
 def get_tables(CURSOR):
@@ -183,7 +191,7 @@ def insert(CURSOR):
 # QUERIES FUNCTION
 def show_queries(CURSOR):
 
-    quer = core.queries.predesigned_queries
+    quer = get_queries()
     desc = core.queries.descriptions
 
     while 1:
