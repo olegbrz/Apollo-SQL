@@ -1,8 +1,10 @@
 # Apollo SQL
 
+[![MIT license](https://img.shields.io/github/license/olegbrz/Apollo-SQL?color=teal)](https://lbesson.mit-license.org/) ![top language](https://img.shields.io/github/languages/top/olegbrz/Apollo-SQL) ![Code size](https://img.shields.io/github/languages/code-size/olegbrz/Apollo-SQL?color=green%20green) ![commit activity](https://img.shields.io/github/commit-activity/m/olegbrz/Apollo-SQL?color=green%20green)
+
 ![banner](images/apollo_banner.png)
 
-Apollo SQL is a lightweight (140 KB!) Oracle database manager developed by a group of students from Málaga's University.
+Apollo SQL is a lightweight Oracle database manager developed by a group of students from Málaga's University.
 
 This CLI program written in Python allows you to connect to remote database to query and relate data with predesigned queries (modify `./core/queries.py`), show whole tables, and insert data into them.
 
