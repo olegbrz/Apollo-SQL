@@ -30,7 +30,13 @@ It works as a CLI (command-line interface), so you just need a command line to w
 
 ## Demo
 
+Here are some examples from the interface (main menu, settings, and a query) running on Windows Powershell 5.1:
+
 ![demo](images/demo.png)
+
+The program also allows to perform customized queries from the menu:
+
+![demo1](images/demo1.png)
 
 ## External packages (included)
 
