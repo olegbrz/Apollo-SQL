@@ -89,7 +89,7 @@ def insert(CURSOR):
             values = []
 
             print(
-                '\nInsert data per each column (* columns are required, ENTER if null):\n')
+                '\n[i] Insert data per each column (* columns are required, ENTER if null):\n')
 
             # Get user data and check data type per each column
             for column in columns_attr:
@@ -106,7 +106,7 @@ def insert(CURSOR):
                 while not completed:
                     # Asks user for data
                     user_input = input(
-                        f' ({datatype}){date_format}: {column[0]}{"*" if required else ""}: ').strip()
+                        f' [?] ({datatype}){date_format}: {column[0]}{"*" if required else ""}: ').strip()
 
                     # If item is null and that's ok, pass
                     if user_input == '' and not required:
@@ -229,7 +229,10 @@ def show_queries(CURSOR):
                 else:
                     print(f'\n(!) Error, option {selected} doesn\'t exist')
                     input('\nPress ENTER')
-
+            
+            if selected == -1:
+                continue
+            
         elif selected == 98:
             query = input('\n[?] Type your customized SQL query\n\n > ')
 
