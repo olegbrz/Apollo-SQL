@@ -1,6 +1,6 @@
 # Apollo SQL
 
-[![MIT license](https://img.shields.io/github/license/olegbrz/Apollo-SQL?color=teal)](https://lbesson.mit-license.org/) ![top language](https://img.shields.io/github/languages/top/olegbrz/Apollo-SQL) ![Code size](https://img.shields.io/github/languages/code-size/olegbrz/Apollo-SQL?color=green%20green) ![commit activity](https://img.shields.io/github/commit-activity/m/olegbrz/Apollo-SQL?color=green%20green)
+[![MIT license](https://img.shields.io/github/license/olegbrz/Apollo-SQL?color=teal)](https://lbesson.mit-license.org/) ![top language](https://img.shields.io/github/languages/top/olegbrz/Apollo-SQL) ![Code size](https://img.shields.io/github/languages/code-size/olegbrz/Apollo-SQL?color=green%20green) ![commit activity](https://img.shields.io/github/commit-activity/m/olegbrz/Apollo-SQL?color=green%20green) ![tag](https://img.shields.io/github/v/tag/olegbrz/Apollo-SQL)
 
 ![banner](images/apollo_banner.png)
 
