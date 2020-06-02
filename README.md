@@ -26,7 +26,17 @@ The usage is pretty simple, just launch the [`main.py`](main.py) file:
 python main.py
 ```
 
-It works as a CLI (command-line interface), so you just need a command line to work with it.
+It works with a CLI (command-line interface), so you just need a command line to work with it.
+
+In the first start, you will need to setup in settings the following connection parameters:
+
+- `host`
+- `port`
+- `sid`
+- `username`
+- `password`
+
+The settings persist in memory in the `config.ini` file, which will be created automatically on first start.
 
 ## Demo
 
