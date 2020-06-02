@@ -81,7 +81,6 @@ def insert(CURSOR):
         selected = core.ui.get_user_input() - 1
 
         if selected == -2:
-            input('\nPress ENTER')
             continue
 
         elif selected == -1:
@@ -203,7 +202,6 @@ def show_queries(CURSOR):
         selected = core.ui.get_user_input() - 1
 
         if selected == -2:
-            input('\nPress ENTER')
             continue
 
         elif selected == -1:
@@ -224,7 +222,6 @@ def show_queries(CURSOR):
                 selected = core.ui.get_user_input() - 1
 
                 if selected == -2:
-                    input('\nPress ENTER')
                     continue
 
                 elif selected == -1:
