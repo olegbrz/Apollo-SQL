@@ -81,6 +81,11 @@ query_result = '''
 ==============================================================
 '''
 
+relating_data = '''
+==============================================================
+   RELATE DATA
+=============================================================='''
+
 # FUNCTIONS
 
 
@@ -117,12 +122,18 @@ def print_settings():
             return mode
 
 
-def get_user_input():
+def get_user_input(valid_options=[]):
     selected = input('\n > ')
+    result = -1
 
     if not selected.isnumeric():
         print('\n(!) Error. Please, enter a number.')
-        return -1
+        input('\nPress ENTER')
+    elif valid_options and int(selected) not in valid_options:
+        print(f'\n(!) Error. Option {selected} doesn\'t exist.')
+        input('\nPress ENTER')
     else:
         selected = int(selected)
-        return selected
+        result = selected
+
+    return result
