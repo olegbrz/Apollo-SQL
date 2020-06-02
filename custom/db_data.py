@@ -1,5 +1,4 @@
 # Descriptions for queries from queries.sql file
-
 descriptions = [
 
     # 1
@@ -55,4 +54,10 @@ descriptions = [
 
     '''Show employees ordered by their age''',
 
+]
+
+# Relation: (table1, table2)
+relations = [
+    ['AFILIADO_A', ['DEPARTAMENTO', 'EMPRESA_EXT']],
+    ['PROVEE_A', ['PROYECTO', 'EMPRESA_EXT']]
 ]

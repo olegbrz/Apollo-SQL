@@ -74,7 +74,11 @@ if __name__ == "__main__":
 
         # TODO: [3] Alter data function
         elif switch == 3:
-            pass
+            if connected_to == '':
+                print('\n[!] Error, no connection was detected.')
+                input('\nPress ENTER')
+                continue
+            core.utils.relate_data(CURSOR)
 
         # [4] Isert data function
         elif switch == 4:

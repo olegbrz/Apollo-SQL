@@ -1,16 +1,18 @@
-import core.queries
 import core.ui
+from custom import db_data
 from datetime import datetime
 from extra.tabulate.tabulate import tabulate
 
+
 # Get customized queries from queries.sql and queries.py files
 def get_queries():
-    f = open('core/queries.sql', encoding='utf-8')
+    f = open('custom/queries.sql', encoding='utf-8')
     full_sql = f.read()
     sql_commands = full_sql.split(';')
 
     queries = [sql_command for sql_command in sql_commands]
     return queries
+
 
 # Get all user tables in a list
 def get_tables(CURSOR):
@@ -191,7 +193,7 @@ def insert(CURSOR):
 def show_queries(CURSOR):
 
     quer = get_queries()
-    desc = core.queries.descriptions
+    desc = db_data.descriptions
 
     while 1:
         print(core.ui.query_data_header)
@@ -234,10 +236,10 @@ def show_queries(CURSOR):
                 else:
                     print(f'\n(!) Error, option {selected} doesn\'t exist')
                     input('\nPress ENTER')
-            
+
             if selected == -1:
                 continue
-            
+
         elif selected == 98:
             query = input('\n[?] Type your customized SQL query\n\n > ')
 
@@ -253,3 +255,105 @@ def show_queries(CURSOR):
             print('\n(!) An error has occurred.')
         finally:
             input('\nPress ENTER')
+
+
+# Relate data
+def relate_data(CURSOR):
+
+    def get_constraints(CURSOR, tablename):
+        query = f'''
+        SELECT column_name
+        FROM all_cons_columns
+        WHERE constraint_name = (
+            SELECT constraint_name
+            FROM user_constraints 
+            WHERE UPPER(table_name) = UPPER('{tablename}') AND CONSTRAINT_TYPE = 'P')'''
+
+        response = CURSOR.execute(query)
+        return [i[0] for i in response]
+
+    def get_key_column(CURSOR, tablename):
+        constraint = get_constraints(CURSOR, tablename)[0]
+
+        query = f'''
+        SELECT {constraint}
+        FROM {tablename}'''
+        response = CURSOR.execute(query)
+
+        return [i[0] for i in response]
+
+    while 1:
+
+        print(core.ui.relating_data)
+
+        for i, v in zip(range(1, len(db_data.relations)+1), db_data.relations):
+            print(f' [{i}] {v[0]}: {v[1][0]} ⟺ {v[1][1]}')
+            print('\n[0] BACK')
+
+        n = core.ui.get_user_input(range(0, len(db_data.relations)+1)) - 1
+
+        if n == -1:
+            break
+
+        relation = db_data.relations[n]
+
+        print('\nSelect table:\n')
+
+        for i, v in zip(range(1, len(relation)+1), relation[1]):
+            print(f' [{i}] {v}')
+
+        n = core.ui.get_user_input(range(1, len(relation)+1)) - 1
+
+        table1 = relation[1][n]
+        table2 = relation[1][n-1]
+
+        print(f'\nSelect entity from {table1}:\n')
+
+        entities1 = get_key_column(CURSOR, table1)
+        entities2 = get_key_column(CURSOR, table2)
+
+        for i, v in zip(range(1, len(entities1)+1), entities1):
+            print(f' [{i}] {v}')
+
+        n = core.ui.get_user_input(range(1, len(entities1)+1)) - 1
+
+        entity1 = entities1[n]
+
+        print(f'\nSelect entity from {table2}:\n')
+
+        for i, v in zip(range(1, len(entities2)+1), entities2):
+            print(f' [{i}] {v}')
+
+        n = core.ui.get_user_input(range(1, len(entities2)+1)) - 1
+
+        entity2 = entities2[n]
+
+        keys = get_constraints(CURSOR, relation[0])
+
+        if table1.upper() in keys[0]:
+            values = [entity1] + [entity2]
+        else:
+            values = [entity2] + [entity1]
+
+        # String '' correction
+        for i in range(len(values)):
+            values[i] = "'" + values[i] + "'"
+
+        keys = ', '.join(keys)
+        values = ', '.join(values)
+
+        insert_statement = f'''
+        INSERT INTO {relation[0]} ({keys}) VALUES ({values})
+        '''
+
+        op = input(
+            f'\n[?] Establish relationship {relation[0]}({table1}:{entity1} ⟺ {table2}:{entity2})? (y/n) \n\n > ')
+
+        if op in ['y', 'Y', 'yes', 'Yes', 'YES']:
+            CURSOR.execute(insert_statement)
+            print('\n[i] Operation executed successfully.')
+            break
+        else:
+            print('\n(!) Operation cancelled')
+
+    print(core.ui.bar)
