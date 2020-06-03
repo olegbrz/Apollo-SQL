@@ -50,7 +50,7 @@ The program also allows to perform customized queries from the menu:
 
 Relate and insert data functionalities:
 
-|![demo2](images/demo2.png)
+![demo2](images/demo2.png)
 
 ## External packages (included)
 
