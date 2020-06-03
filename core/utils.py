@@ -125,23 +125,27 @@ def insert(CURSOR):
                     # Prevents set to null no nullable elements
                     elif user_input == '' and required:
                         print(f'\n(!) Error, {column[0]} is required.\n')
+                        input('\nPress ENTER to continue.')
                         continue
 
                     # Checks if item lenght is valid
                     elif len(user_input) > column[2]:
                         print(
                             f'\n(!) Error, {column[0]} maximum lenght is {column[2]}.\n')
+                        input('\nPress ENTER to continue.')
                         continue
 
                     # Checks if item is number
                     elif datatype == 'NUMBER' and not is_number(user_input):
                         print(
                             f'\n(!) Error, {column[0]} has to be a number.\n')
+                        input('\nPress ENTER to continue.')
                         continue
 
                     # Cheks if item is datetime
                     elif datatype == 'DATETIME' and not is_date(user_input):
                         print(f'\n(!) Error, not a valid date.\n')
+                        input('\nPress ENTER to continue.')
                         continue
 
                     # If all ok...
@@ -177,16 +181,18 @@ def insert(CURSOR):
                 except:
                     print(
                         '\n[!] Something went wrong, insert failed. Please, check item data types.')
+                    input('\nPress ENTER to continue.')
                 else:
                     print('\n[i] Insert executed successfully.')
+                    input('\nPress ENTER to continue.')
 
             else:
                 print('\n(!) INSERT cancelled.')
-                input('Press ENTER')
+                input('\nPress ENTER to continue.')
 
         else:
             print(f'\n(!) Error, option {selected+1} doesn\'t exist')
-            input('\nPress ENTER')
+            input('\nPress ENTER to continue.')
 
 
 # QUERIES FUNCTION
@@ -235,7 +241,7 @@ def show_queries(CURSOR):
 
                 else:
                     print(f'\n(!) Error, option {selected} doesn\'t exist')
-                    input('\nPress ENTER')
+                    input('\nPress ENTER to continue.')
 
             if selected == -1:
                 continue
@@ -245,7 +251,7 @@ def show_queries(CURSOR):
 
         else:
             print(f'\n(!) Error, option {selected+1} doesn\'t exist')
-            input('\nPress ENTER')
+            input('\nPress ENTER to continue.')
 
         print(core.ui.query_result)
 
@@ -254,7 +260,7 @@ def show_queries(CURSOR):
         except:
             print('\n(!) An error has occurred.')
         finally:
-            input('\nPress ENTER')
+            input('\nPress ENTER to continue.')
 
 
 # Relate data
@@ -288,7 +294,7 @@ def relate_data(CURSOR):
 
         for i, v in zip(range(1, len(db_data.relations)+1), db_data.relations):
             print(f' [{i}] {v[0]}: {v[1][0]} ⟺ {v[1][1]}')
-            print('\n[0] BACK')
+        print('\n [0] BACK')
 
         n = core.ui.get_user_input(range(0, len(db_data.relations)+1)) - 1
 
@@ -352,8 +358,10 @@ def relate_data(CURSOR):
         if op in ['y', 'Y', 'yes', 'Yes', 'YES']:
             CURSOR.execute(insert_statement)
             print('\n[i] Operation executed successfully.')
+            input('\nPress ENTER to continue.')
             break
         else:
             print('\n(!) Operation cancelled')
+            input('\nPress ENTER to continue.')
 
     print(core.ui.bar)
