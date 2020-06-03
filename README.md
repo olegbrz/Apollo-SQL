@@ -48,6 +48,10 @@ The program also allows to perform customized queries from the menu:
 
 ![demo1](images/demo1.png)
 
+Relate and insert data functionalities:
+
+|![demo2](images/demo2.png)
+
 ## External packages (included)
 
 The program uses external open-source packages (license included in every package in [`extra/`](extra/)):
