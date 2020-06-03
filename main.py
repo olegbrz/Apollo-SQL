@@ -24,7 +24,7 @@ def connect_to_server():
     conn.autocommit = True
 
     print('[i] Connected successfully.')
-    input('\nPress ENTER')
+    input('\nPress ENTER to continue.')
 
     return conn.cursor()
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
             switch = core.ui.print_menu(connected_to)
         except:
             print('\n(!) Please, check your selection.')
-            input('\nPress ENTER')
+            input('\nPress ENTER to continue.')
             continue
 
         # [1] Connect/disconnect option
@@ -54,13 +54,13 @@ if __name__ == "__main__":
                     connected_to = f'\n [i] Connected to {host}:{port} as {user}'
                 except:
                     print('\n[!] Connection failed, please check settings.')
-                    input('\nPress ENTER')
+                    input('\nPress ENTER to continue.')
             else:
                 try:
                     CURSOR.close()
                     connected_to = ''
                     print('\n[i] Disconnected successfully.')
-                    input('\nPress ENTER')
+                    input('\nPress ENTER to continue.')
                 except:
                     pass
 
@@ -68,15 +68,15 @@ if __name__ == "__main__":
         elif switch == 2:
             if connected_to == '':
                 print('\n[!] Error, no connection was detected.')
-                input('\nPress ENTER')
+                input('\nPress ENTER to continue.')
                 continue
             core.utils.show_queries(CURSOR)
 
-        # TODO: [3] Alter data function
+        # [3] Alter data function
         elif switch == 3:
             if connected_to == '':
                 print('\n[!] Error, no connection was detected.')
-                input('\nPress ENTER')
+                input('\nPress ENTER to continue.')
                 continue
             core.utils.relate_data(CURSOR)
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         elif switch == 4:
             if connected_to == '':
                 print('\n[!] Error, no connection was detected.')
-                input('\nPress ENTER')
+                input('\nPress ENTER to continue.')
                 continue
             core.utils.insert(CURSOR)
 
@@ -101,7 +101,7 @@ if __name__ == "__main__":
                     settings = core.config.get_config()
                 else:
                     print(f'\n(!) Error, option {option} doesn\'t exist.')
-                    input('\nPress ENTER')
+                    input('\nPress ENTER to continue.')
 
         # [0] Exit execution
         elif switch == 0:
@@ -115,4 +115,4 @@ if __name__ == "__main__":
 
         else:
             print(f'\n(!) Error, option {switch} doesn\'t exist.')
-            input('\nPress ENTER')
+            input('\nPress ENTER to continue.')
