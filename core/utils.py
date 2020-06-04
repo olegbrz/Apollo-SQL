@@ -124,27 +124,27 @@ def insert(CURSOR):
 
                     # Prevents set to null no nullable elements
                     elif user_input == '' and required:
-                        print(f'\n(!) Error, {column[0]} is required.\n')
+                        print(f'\n(!) Error, {column[0]} is required.')
                         input('\nPress ENTER to continue.')
                         continue
 
                     # Checks if item lenght is valid
                     elif len(user_input) > column[2]:
                         print(
-                            f'\n(!) Error, {column[0]} maximum lenght is {column[2]}.\n')
+                            f'\n(!) Error, {column[0]} maximum lenght is {column[2]}.')
                         input('\nPress ENTER to continue.')
                         continue
 
                     # Checks if item is number
                     elif datatype == 'NUMBER' and not is_number(user_input):
                         print(
-                            f'\n(!) Error, {column[0]} has to be a number.\n')
+                            f'\n(!) Error, {column[0]} has to be a number.')
                         input('\nPress ENTER to continue.')
                         continue
 
                     # Cheks if item is datetime
                     elif datatype == 'DATETIME' and not is_date(user_input):
-                        print(f'\n(!) Error, not a valid date.\n')
+                        print(f'\n(!) Error, not a valid date.')
                         input('\nPress ENTER to continue.')
                         continue
 
@@ -202,6 +202,7 @@ def show_queries(CURSOR):
     desc = db_data.descriptions
 
     while 1:
+        selection_ok = True
         print(core.ui.query_data_header)
         for i, v in zip(range(1, len(desc)+1), desc):
             print(' [{:>2}] {}'.format(i, v))
@@ -250,17 +251,19 @@ def show_queries(CURSOR):
             query = input('\n[?] Type your customized SQL query\n\n > ')
 
         else:
+            selection_ok = False
             print(f'\n(!) Error, option {selected+1} doesn\'t exist')
             input('\nPress ENTER to continue.')
 
         print(core.ui.query_result)
 
-        try:
-            show_query(CURSOR, query)
-        except:
-            print('\n(!) An error has occurred.')
-        finally:
-            input('\nPress ENTER to continue.')
+        if selection_ok:
+            try:
+                show_query(CURSOR, query)
+            except:
+                print('\n(!) An error has occurred.')
+            finally:
+                input('\nPress ENTER to continue.')
 
 
 # Relate data
@@ -293,13 +296,14 @@ def relate_data(CURSOR):
         print(core.ui.relating_data)
 
         for i, v in zip(range(1, len(db_data.relations)+1), db_data.relations):
-            print(f' [{i}] {v[0]}: {v[1][0]} ⟺ {v[1][1]}')
+            print(f' [{i}] {v[0]}: {v[1][0]} <-> {v[1][1]}')
         print('\n [0] BACK')
+        print(core.ui.bar)
 
-        n = core.ui.get_user_input(range(0, len(db_data.relations)+1)) - 1
+        n = core.ui.get_user_input(range(0, len(db_data.relations))) - 1
 
-        if n == -1:
-            break
+        if n == -1: break
+        elif n == -2: continue
 
         relation = db_data.relations[n]
 
@@ -308,7 +312,9 @@ def relate_data(CURSOR):
         for i, v in zip(range(1, len(relation)+1), relation[1]):
             print(f' [{i}] {v}')
 
-        n = core.ui.get_user_input(range(1, len(relation)+1)) - 1
+        n = core.ui.get_user_input(range(1, len(relation) + 1)) - 1
+        
+        if n == -2: continue
 
         table1 = relation[1][n]
         table2 = relation[1][n-1]
@@ -321,7 +327,9 @@ def relate_data(CURSOR):
         for i, v in zip(range(1, len(entities1)+1), entities1):
             print(f' [{i}] {v}')
 
-        n = core.ui.get_user_input(range(1, len(entities1)+1)) - 1
+        n = core.ui.get_user_input(range(1, len(entities1) + 1)) - 1
+        
+        if n == -2: continue
 
         entity1 = entities1[n]
 
@@ -330,7 +338,9 @@ def relate_data(CURSOR):
         for i, v in zip(range(1, len(entities2)+1), entities2):
             print(f' [{i}] {v}')
 
-        n = core.ui.get_user_input(range(1, len(entities2)+1)) - 1
+        n = core.ui.get_user_input(range(1, len(entities2) + 1)) - 1
+        
+        if n == -2: continue
 
         entity2 = entities2[n]
 
@@ -353,7 +363,7 @@ def relate_data(CURSOR):
         '''
 
         op = input(
-            f'\n[?] Establish relationship {relation[0]}({table1}:{entity1} ⟺ {table2}:{entity2})? (y/n) \n\n > ')
+            f'\n[?] Establish relationship {relation[0]}({table1}:{entity1} <-> {table2}:{entity2})? (y/n) \n\n > ')
 
         if op in ['y', 'Y', 'yes', 'Yes', 'YES']:
             CURSOR.execute(insert_statement)

@@ -72,7 +72,7 @@ if __name__ == "__main__":
                 continue
             core.utils.show_queries(CURSOR)
 
-        # [3] Alter data function
+        # [3] Relate data function
         elif switch == 3:
             if connected_to == '':
                 print('\n[!] Error, no connection was detected.')
