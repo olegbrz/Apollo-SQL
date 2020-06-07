@@ -53,7 +53,7 @@ if __name__ == "__main__":
                     user = settings['connection']['user']
                     connected_to = f'\n [i] Connected to {host}:{port} as {user}'
                 except:
-                    print('\n[!] Connection failed, please check settings.')
+                    print('\n[!] Connection failed.')
                     input('\nPress ENTER to continue.')
             else:
                 try:

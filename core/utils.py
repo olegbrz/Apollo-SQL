@@ -269,109 +269,216 @@ def show_queries(CURSOR):
 # Relate data
 def relate_data(CURSOR):
 
-    def get_constraints(CURSOR, tablename):
+    # Types of constraints: P - primary, R - referential or foreign
+    def get_constraints(CURSOR, tablename, type='P'):
         query = f'''
         SELECT column_name
         FROM all_cons_columns
         WHERE constraint_name = (
             SELECT constraint_name
             FROM user_constraints 
-            WHERE UPPER(table_name) = UPPER('{tablename}') AND CONSTRAINT_TYPE = 'P')'''
+            WHERE UPPER(table_name) = UPPER('{tablename}') AND CONSTRAINT_TYPE = '{type}')'''
 
         response = CURSOR.execute(query)
         return [i[0] for i in response]
 
     def get_key_column(CURSOR, tablename):
-        constraint = get_constraints(CURSOR, tablename)[0]
-
+        constraints = get_constraints(CURSOR, tablename)
+        if len(constraints) != 1:
+            constraints = ', '.join(constraints)
+        else:
+            constraints = constraints[0]
         query = f'''
-        SELECT {constraint}
+        SELECT {constraints}
         FROM {tablename}'''
         response = CURSOR.execute(query)
 
-        return [i[0] for i in response]
+        res = [i for i in response]
+
+        if len(res[0]) == 1:
+            res = [[i[0]] for i in res]
+
+        return res
 
     while 1:
 
         print(core.ui.relating_data)
 
-        for i, v in zip(range(1, len(db_data.relations)+1), db_data.relations):
-            print(f' [{i}] {v[0]}: {v[1][0]} <-> {v[1][1]}')
-        print('\n [0] BACK')
+        for i, v in zip(range(1, len(db_data.relations) + 1), db_data.relations):
+            '''
+            From custom.db_data.py
+            Relation: [destination, origin(s), type]
+            Types of relationships:
+            1 -> 1:1, 2 -> 1:N, 3 -> N:M
+            '''
+            if v[-1] == 1:
+                print(' [{:>2}] {} --- {}'.format(i, v[0], v[1]))
+            elif v[-1] == 2:
+                print(' [{:>2}] {} <-- {}'.format(i, v[0], v[1]))
+            elif v[-1] == 3:
+                print(' [{:>2}] {}: {} <-> {}'.format(i, v[0], v[1][0], v[1][1]))
+        print('\n [ 0] BACK')
         print(core.ui.bar)
 
-        n = core.ui.get_user_input(range(0, len(db_data.relations))) - 1
+        n = core.ui.get_user_input(range(0, len(db_data.relations)+1)) - 1
 
-        if n == -1: break
-        elif n == -2: continue
+        if n == -1:
+            break
+        elif n == -2:
+            continue
 
         relation = db_data.relations[n]
 
-        print('\nSelect table:\n')
+        # TODO: 1:1 relation (P-keys interchange)
+        if relation[-1] == 1:
+            pass
 
-        for i, v in zip(range(1, len(relation)+1), relation[1]):
-            print(f' [{i}] {v}')
+        # Type 2: 1:N (destination table gets
+        # P-key from origin as F-key)
+        elif relation[-1] == 2:
+            entities1 = get_key_column(CURSOR, relation[0])
+            entities2 = get_key_column(CURSOR, relation[1])
 
-        n = core.ui.get_user_input(range(1, len(relation) + 1)) - 1
-        
-        if n == -2: continue
+            # convert entities lists in print-ready versions without brackets
+            entities1_disp = [', '.join([str(e) for e in e1])
+                              for e1 in entities1]
+            entities2_disp = [', '.join([str(e) for e in e2])
+                              for e2 in entities2]
 
-        table1 = relation[1][n]
-        table2 = relation[1][n-1]
+            print(f'\nSelect entity from {relation[0]}:\n')
 
-        print(f'\nSelect entity from {table1}:\n')
+            for i, v in zip(range(1, len(entities1)+1), entities1_disp):
+                print(f' [{i}] {v}')
 
-        entities1 = get_key_column(CURSOR, table1)
-        entities2 = get_key_column(CURSOR, table2)
+            n1 = core.ui.get_user_input(range(0, len(entities1) + 1)) - 1
 
-        for i, v in zip(range(1, len(entities1)+1), entities1):
-            print(f' [{i}] {v}')
+            if n1 == -2:
+                continue
 
-        n = core.ui.get_user_input(range(1, len(entities1) + 1)) - 1
-        
-        if n == -2: continue
+            print(
+                f'\nSelect entity from {relation[1]} to link to {relation[0]}:\n')
 
-        entity1 = entities1[n]
+            for i, v in zip(range(1, len(entities2)+1), entities2_disp):
+                print(f' [{i}] {v}')
 
-        print(f'\nSelect entity from {table2}:\n')
+            n2 = core.ui.get_user_input(range(0, len(entities2) + 1)) - 1
 
-        for i, v in zip(range(1, len(entities2)+1), entities2):
-            print(f' [{i}] {v}')
+            if n2 == -2:
+                continue
 
-        n = core.ui.get_user_input(range(1, len(entities2) + 1)) - 1
-        
-        if n == -2: continue
+            entity1 = entities1[n1]
+            entity2 = entities2[n2]
 
-        entity2 = entities2[n]
+            FK = get_constraints(CURSOR, relation[0], 'R')
 
-        keys = get_constraints(CURSOR, relation[0])
+            # creating update statement payload:
+            # column1 = value2, column2 = value2, ...
+            payload = []
+            for column, value in zip(FK, entity2):
+                if type(value) == str:
+                    value = f"'{value}'"
+                payload.append(f'{column} = {value}')
+            payload = ', '.join(payload)
 
-        if table1.upper() in keys[0]:
-            values = [entity1] + [entity2]
-        else:
-            values = [entity2] + [entity1]
+            # we need only one key to identify the identity
+            PK = get_constraints(CURSOR, relation[0])[0]
+            PK_value = entity1[0]
 
-        # String '' correction
-        for i in range(len(values)):
-            values[i] = "'" + values[i] + "'"
+            # string correction ''
+            if type(PK_value) == str:
+                PK_value = f"'{PK_value}'"
 
-        keys = ', '.join(keys)
-        values = ', '.join(values)
+            update = f'''
+            UPDATE {relation[0]}
+            SET {payload}
+            WHERE {PK} = {PK_value}
+            '''
 
-        insert_statement = f'''
-        INSERT INTO {relation[0]} ({keys}) VALUES ({values})
-        '''
+            print(update)
+            op = input(
+                f'\n[?] Establish relationship {relation[0]}({entities1_disp[n1]}) <-- {relation[1]}({entities2_disp[n2]})? (y/n) \n\n > ')
 
-        op = input(
-            f'\n[?] Establish relationship {relation[0]}({table1}:{entity1} <-> {table2}:{entity2})? (y/n) \n\n > ')
+            if op in ['y', 'Y', 'yes', 'Yes', 'YES']:
+                CURSOR.execute(update)
+                print('\n[i] Operation executed successfully.')
+                input('\nPress ENTER to continue.')
+                break
+            else:
+                print('\n(!) Operation cancelled')
+                input('\nPress ENTER to continue.')
 
-        if op in ['y', 'Y', 'yes', 'Yes', 'YES']:
-            CURSOR.execute(insert_statement)
-            print('\n[i] Operation executed successfully.')
-            input('\nPress ENTER to continue.')
-            break
-        else:
-            print('\n(!) Operation cancelled')
-            input('\nPress ENTER to continue.')
+        # Type 3: N:M (destination table gets P-keys
+        # from both origin tables as PF-keys)
+        elif relation[-1] == 3:
+
+            print('\nSelect table:\n')
+
+            for i, v in zip(range(1, len(relation[1])+1), relation[1]):
+                print(f' [{i}] {v}')
+
+            n = core.ui.get_user_input(range(1, len(relation[1]) + 1)) - 1
+
+            if n == -2:
+                continue
+
+            table1 = relation[1][n]
+            table2 = relation[1][n-1]
+
+            print(f'\nSelect entity from {table1}:\n')
+
+            entities1 = [i[0] for i in get_key_column(CURSOR, table1)]
+            entities2 = [i[0] for i in get_key_column(CURSOR, table2)]
+
+            for i, v in zip(range(1, len(entities1)+1), entities1):
+                print(f' [{i}] {v}')
+
+            n = core.ui.get_user_input(range(1, len(entities1) + 1)) - 1
+
+            if n == -2:
+                continue
+
+            entity1 = entities1[n]
+
+            print(f'\nSelect entity from {table2}:\n')
+
+            for i, v in zip(range(1, len(entities2)+1), entities2):
+                print(f' [{i}] {v}')
+
+            n = core.ui.get_user_input(range(1, len(entities2) + 1)) - 1
+
+            if n == -2:
+                continue
+
+            entity2 = entities2[n]
+
+            keys = get_constraints(CURSOR, relation[0])
+
+            if table1.upper() in keys[0]:
+                values = [entity1] + [entity2]
+            else:
+                values = [entity2] + [entity1]
+
+            # String '' correction
+            for i in range(len(values)):
+                values[i] = "'" + values[i] + "'"
+
+            keys = ', '.join(keys)
+            values = ', '.join(values)
+
+            insert_statement = f'''
+            INSERT INTO {relation[0]} ({keys}) VALUES ({values})
+            '''
+
+            op = input(
+                f'\n[?] Establish relationship {relation[0]}({table1}:{entity1} <-> {table2}:{entity2})? (y/n) \n\n > ')
+
+            if op in ['y', 'Y', 'yes', 'Yes', 'YES']:
+                CURSOR.execute(insert_statement)
+                print('\n[i] Operation executed successfully.')
+                input('\nPress ENTER to continue.')
+                break
+            else:
+                print('\n(!) Operation cancelled')
+                input('\nPress ENTER to continue.')
 
     print(core.ui.bar)
