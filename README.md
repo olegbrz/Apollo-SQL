@@ -48,7 +48,7 @@ The program also allows to perform customized queries from the menu:
 
 ![demo1](images/demo1.png)
 
-Relate and insert data functionalities:
+Relate (1:1, 1:N and N:M relationships) and insert data functionalities:
 
 ![demo2](images/demo2.png)
 
